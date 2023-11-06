@@ -1,0 +1,9 @@
+{
+    "name": "DeckedOut",
+    "version": "0.0.1",
+    "title": "Decked Out",
+    "description": "A roguelike minigame you can play while waiting for your factory to build/research",
+    "author": "kiegames",
+    "factorio_version": "1.1",
+    "dependencies": []
+  }
