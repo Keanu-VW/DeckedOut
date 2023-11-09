@@ -3,6 +3,9 @@ local function generate_room_decor(x_origin, y_origin, room_type)
     local tiles = {}
     local entities = {} -- To keep track of where entities should be placed
 
+    game.print("Setting tile size")
+    local tile_size = 64
+
     -- Define different patterns and entities based on the room type
     if room_type == "spawn" then
         -- Spawn room pattern and entities
@@ -25,7 +28,7 @@ local function generate_room_decor(x_origin, y_origin, room_type)
         table.insert(entities, {name = "small-lamp", position = {x_origin + tile_size / 2, y_origin + tile_size / 2}})
     else  -- Normal room
         -- Define a base tile for the room
-        local base_tile = "stone-path"
+        local base_tile = "dirtStoneTile"
 
         -- Fill the room with base tiles
         for tile_x = 0, tile_size - 1 do
@@ -39,9 +42,9 @@ local function generate_room_decor(x_origin, y_origin, room_type)
             for tile_y = 8, tile_size - 9 do
                 local tile_type
                 if (tile_x / 8) % 2 == (tile_y / 8) % 2 then
-                    tile_type = "concrete"
+                    tile_type = "cobbleStoneTile"
                 else
-                    tile_type = "hazard-concrete-left"
+                    tile_type = "cobbleStoneTile"
                 end
                 table.insert(tiles, {name = tile_type, position = {x_origin + tile_x, y_origin + tile_y}})
             end
@@ -50,10 +53,10 @@ local function generate_room_decor(x_origin, y_origin, room_type)
         -- Place walls around the perimeter, except in the middle
         for i = 0, tile_size - 1 do
             if not (i >= tile_size / 2 - 2 and i <= tile_size / 2 + 1) then
-                table.insert(entities, {name = "stone-wall", position = {x_origin + i, y_origin}})
-                table.insert(entities, {name = "stone-wall", position = {x_origin + i, y_origin + tile_size - 1}})
-                table.insert(entities, {name = "stone-wall", position = {x_origin, y_origin + i}})
-                table.insert(entities, {name = "stone-wall", position = {x_origin + tile_size - 1, y_origin + i}})
+                table.insert(entities, {name = "cobbleStoneWall", position = {x_origin + i, y_origin}})
+                table.insert(entities, {name = "cobbleStoneWall", position = {x_origin + i, y_origin + tile_size - 1}})
+                table.insert(entities, {name = "cobbleStoneWall", position = {x_origin, y_origin + i}})
+                table.insert(entities, {name = "cobbleStoneWall", position = {x_origin + tile_size - 1, y_origin + i}})
             end
         end
 
