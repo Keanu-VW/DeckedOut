@@ -26,7 +26,7 @@ function roomBuilder(player)
         }
 
         -- Create the surface
-        room_editor_surface = game.create_surface("roomEditor", map_gen_settings)
+        room_editor_surface = game.create_surface("roomEditor"..math.random(1, 99999), map_gen_settings)
 
         game.print("Force Loading")
         -- Calculate the chunk area to generate based on the matrix size
@@ -71,10 +71,10 @@ function roomBuilder(player)
         -- Place walls around the perimeter, except in the middle
         for i = 0, tile_size - 1 do
             if i < tile_size / 2 - 2 or i > tile_size / 2 + 1 then
-                table.insert(entities, {name = "cobbleStoneWall", position = {0 + i, 0}})
-                table.insert(entities, {name = "cobbleStoneWall", position = {0 + i, tile_size - 1}})
-                table.insert(entities, {name = "cobbleStoneWall", position = {0, 0 + i}})
-                table.insert(entities, {name = "cobbleStoneWall", position = {tile_size - 1, 0 + i}})
+                table.insert(entities, {name = "stone-wall", position = {0 + i, 0}})
+                table.insert(entities, {name = "stone-wall", position = {0 + i, tile_size - 1}})
+                table.insert(entities, {name = "stone-wall", position = {0, 0 + i}})
+                table.insert(entities, {name = "stone-wall", position = {tile_size - 1, 0 + i}})
             end
         end
 
@@ -85,51 +85,45 @@ function roomBuilder(player)
     end
 
     player.teleport({x = 32, y = 1}, room_editor_surface)
-
-    commands.add_command("saveFloor", "Save floor data", function(event)
-        local saved_floor = {}
-        local player = game.players[event.player_index]
-
-        -- Check if the player is standing on the roomEditor_surface
-        if player.surface.name == "roomEditor" then
-            local area = {{0, 0}, {tile_size - 1, tile_size - 1}}
-
-            -- Capture tiles
-            local tile_matrix = {}
-            for x = area[1][1], area[2][1] do
-                for y = area[1][2], area[2][2] do
-                    local tile = player.surface.get_tile(x, y)
-                    table.insert(tile_matrix, tile.name)
-                end
-            end
-
-            -- Capture entities
-            local entities = player.surface.find_entities_filtered{area = area}
-            local entity_positions = {}
-            for _, entity in pairs(entities) do
-                entity_positions[#entity_positions + 1] = {name = entity.name, position = entity.position}
-            end
-
-            -- Get the floor name from the command parameter
-            local floor_name = event.parameter
-
-            -- Store the data with a unique name
-            saved_floor[floor_name] = {tiles = tile_matrix, entities = entity_positions}
-            player.print("Floor '" .. floor_name .. "' saved.")
-
-            local serialized_data = game.table_to_json(saved_floor)
-
-            -- Print the path where the file should be saved
-            local file_path = "save/here/test.json"
-            player.print("Saving to file: " .. file_path)
-
-            -- Write the JSON data to a file within the mod folder
-            game.write_file(file_path, serialized_data, false, 0)
-        else
-            player.print("Please stand on the roomEditor_surface to save the floor.")
-        end
-    end)
-    
-
 end
 
+commands.add_command("saveFloor", "Save floor data", function(event)
+    local tile_size = 64
+    local saved_floor = {}
+    local player = game.players[event.player_index]
+
+    -- Check if the player is standing on the roomEditor_surface
+        local area = {{0, 0}, {tile_size - 1, tile_size - 1}}
+
+        -- Capture tiles
+        local tile_matrix = {}
+        for x = area[1][1], area[2][1] do
+            for y = area[1][2], area[2][2] do
+                local tile = player.surface.get_tile(x, y)
+                table.insert(tile_matrix, tile.name)
+            end
+        end
+
+        -- Capture entities
+        local entities = player.surface.find_entities_filtered{area = area}
+        local entity_positions = {}
+        for _, entity in pairs(entities) do
+            entity_positions[#entity_positions + 1] = {name = entity.name, position = entity.position}
+        end
+
+        -- Get the floor name from the command parameter
+        local floor_name = event.parameter
+
+        -- Store the data with a unique name
+        saved_floor[floor_name] = {tiles = tile_matrix, entities = entity_positions}
+        player.print("Floor '" .. floor_name .. "' saved.")
+
+        local serialized_data = game.table_to_json(saved_floor)
+
+        -- Print the path where the file should be saved
+        local file_path = "C:/Users/keanu/AppData/Roaming/Factorio/script-output/roomBuilder/rooms.json"
+        player.print("Saving to file: " .. file_path)
+
+        -- Write the JSON data to a file within the mod folder
+        game.write_file(file_path, serialized_data, true)
+end)
