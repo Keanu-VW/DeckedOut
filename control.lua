@@ -2,6 +2,15 @@ require("scripts/createMatrix.lua")
 require("scripts/turnMatrixIntoMap.lua")
 require("scripts/roomBuilder.lua")
 
+-- Event handler for on_player_created
+commands.add_command("give_artifact", "gives the player an arficact", function(command)
+    local player = game.get_player(command.player_index)  -- Get the player who ran the command
+
+    -- Give the player the slimeArtifact
+    player.insert({name = "slimeArtifact", count = 1})
+end)
+
+
 -- Command to generate the new surface and teleport the player
 commands.add_command("generate_surface", "Generates a new surface based on the matrix", function(command)
     local player = game.get_player(command.player_index)  -- Get the player who ran the command
@@ -35,6 +44,16 @@ commands.add_command("generate_surface", "Generates a new surface based on the m
         game.print("Spawn room not found, teleporting to origin")
         -- If no spawn room was found, teleport to the origin as a fallback
         player.teleport({x = 0, y = 0}, new_surface)
+    end
+    local artifact_position = nil
+    for x, row in ipairs(matrix) do
+        for y, value in ipairs(row) do
+            if value == 2 then
+                -- Calculate the center position of the room, not the tile
+                artifact_position = {x = (x - 1) * tile_size + (tile_size/2), y = (y - 1) * tile_size + (tile_size/2)}
+                new_surface.spill_item_stack(artifact_position, {name="slimeArtifact", count=1})
+            end
+        end
     end
 
 end)

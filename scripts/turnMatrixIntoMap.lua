@@ -25,7 +25,7 @@ local function generate_room_decor(x_origin, y_origin, room_type)
             end
         end
         -- Example: Place an artifact entity in the center of the artifact room
-        table.insert(entities, {name = "small-lamp", position = {x_origin + tile_size / 2, y_origin + tile_size / 2}})
+        table.insert(entities, {name = "artifactSpawnTile", position = {x_origin + tile_size / 2, y_origin + tile_size / 2}})
     else  -- Normal room
         -- Define a base tile for the room
         local base_tile = "dirtStoneTile"
@@ -218,9 +218,6 @@ function turnMatrixIntoMap(matrix, tile_size)
                 for _, entity in pairs(entities) do
                     table.insert(global.entities_to_create, {name = entity.name, position = entity.position, force = entity.force})
                 end
-
-                -- Here you should also schedule entity placement to be processed in on_tick or another event
-                -- ... (entity placement logic)
             end
         end
     end
@@ -246,7 +243,6 @@ function turnMatrixIntoMap(matrix, tile_size)
             script.on_event(defines.events.on_tick, nil)
         end
     end)
-
 
     return new_surface
 end
