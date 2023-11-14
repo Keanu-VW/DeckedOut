@@ -1,7 +1,4 @@
 function generate_dungeon_floor(map_matrix, map_size)
-    local tiles = {} -- To keep track of where tiles should be placed
-    local entities = {} -- To keep track of where entities should be placed
-
     -- Create the new surface
     game.print("Creating new surface")
     local map_gen_settings = {
@@ -23,42 +20,38 @@ function generate_dungeon_floor(map_matrix, map_size)
 
     local dungeon_surface = game.create_surface("dungeon_floor_" .. math.random(9999), map_gen_settings)
 
-    game.print("Force Loading")
-    -- Calculate the chunk area to generate based on the matrix size
     local chunk_area_to_generate = {
         left_top = {x = -1, y = -1},
-        right_bottom = {x = map_size + 1, y = map_size + 1}
+        right_bottom = {x = math.ceil(map_size/32), y = math.ceil(map_size/32)}
     }
-
-    local chunks_generated = 0
 
     -- Request chunk generation for the entire area
     for chunk_x = chunk_area_to_generate.left_top.x, chunk_area_to_generate.right_bottom.x do
         for chunk_y = chunk_area_to_generate.left_top.y, chunk_area_to_generate.right_bottom.y do
-            dungeon_surface.request_to_generate_chunks({x = chunk_x * map_size, y = chunk_y * map_size}, 0)
+            dungeon_surface.request_to_generate_chunks({x = chunk_x * 32, y = chunk_y * 32}, 0)
+        end
+    end
+    dungeon_surface.force_generate_chunk_requests()  -- Force the generation of requested chunks
+
+    local all_tiles = {}
+    for x = -32, map_size + 32 do
+        for y = -32, map_size + 32 do
+            table.insert(all_tiles, {name = "concrete", position = {x, y}})
         end
     end
 
-    game.print("Waiting for chunks to generate...")
-    script.on_event(defines.events.on_chunk_generated, function(event)
-        chunks_generated = chunks_generated + 1
-        if chunks_generated == (map_size + 1) * (map_size + 1) then
-            game.print("Setting out-of-map Tiles")
+    dungeon_surface.set_tiles(all_tiles)
 
-            -- Set the entire area to 'out-of-map'
-            local all_tiles = {}
-            for y, row in ipairs(map_matrix) do
-                for x, cell in ipairs(row) do
-                    table.insert(all_tiles, {name = "out-of-map", position = {x - 1, y - 1}})
-                end
+    all_tiles = {}
+    for x = 1, map_size do
+        for y = 1, map_size do
+            if map_matrix[x][y] == 1 then
+                table.insert(all_tiles, {name = "lab-white", position = {x, y}})
             end
-
-            dungeon_surface.set_tiles(all_tiles)
-
-            -- Remove the on_chunk_generated event to stop checking for chunk generation
-            script.on_event(defines.events.on_chunk_generated, nil)
         end
-    end)
+    end
+
+    dungeon_surface.set_tiles(all_tiles)
 
     return dungeon_surface
 end
