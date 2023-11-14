@@ -2,60 +2,25 @@ require("scripts/createMatrix.lua")
 require("scripts/turnMatrixIntoMap.lua")
 require("scripts/roomBuilder.lua")
 
--- Event handler for on_player_created
-commands.add_command("give_artifact", "gives the player an arficact", function(command)
-    local player = game.get_player(command.player_index)  -- Get the player who ran the command
-
-    -- Give the player the slimeArtifact
-    player.insert({name = "slimeArtifact", count = 1})
-end)
-
-
 -- Command to generate the new surface and teleport the player
 commands.add_command("generate_surface", "Generates a new surface based on the matrix", function(command)
     local player = game.get_player(command.player_index)  -- Get the player who ran the command
 
-    local tile_size = 64
+    local map_size = 80 -- Set the map size
 
     game.print("Creating matrix")
-    local matrix = createMatrix(12, 12)  -- Assume createMatrix is already defined and generates your matrix
+    local map_matrix = generate_map_matrix(map_size)  -- Assume createMatrix is already defined and generates your matrix
 
     game.print("Turning matrix into new surface")
-    local new_surface = turnMatrixIntoMap(matrix, tile_size)
+    local dungeon_surface = generate_dungeon_floor(map_matrix, map_size)
 
-    -- Inside the command function after the new_surface has been created
-    local spawn_position = nil
-    for x, row in ipairs(matrix) do
-        for y, value in ipairs(row) do
-            if value == 2 then
-                -- Calculate the center position of the room, not the tile
-                spawn_position = {x = (x - 1) * tile_size + (tile_size/2), y = (y - 1) * tile_size + (tile_size/2)}
-                goto found_spawn  -- Use a goto statement to break out of both loops
+    for x = 1, map_size do
+        for y = 1, map_size do
+            if map_matrix[x][y] == 4 then
+                player.teleport({x,y}, dungeon_surface)
             end
         end
     end
-    ::found_spawn::
-
-    if spawn_position then
-        game.print("Teleporting player to spawn room")
-        -- Teleport the player to the spawn position
-        player.teleport(spawn_position, new_surface)
-    else
-        game.print("Spawn room not found, teleporting to origin")
-        -- If no spawn room was found, teleport to the origin as a fallback
-        player.teleport({x = 0, y = 0}, new_surface)
-    end
-    local artifact_position = nil
-    for x, row in ipairs(matrix) do
-        for y, value in ipairs(row) do
-            if value == 2 then
-                -- Calculate the center position of the room, not the tile
-                artifact_position = {x = (x - 1) * tile_size + (tile_size/2), y = (y - 1) * tile_size + (tile_size/2)}
-                new_surface.spill_item_stack(artifact_position, {name="slimeArtifact", count=1})
-            end
-        end
-    end
-
 end)
 
 -- Define the roomBuilder command
