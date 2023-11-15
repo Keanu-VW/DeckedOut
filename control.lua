@@ -1,6 +1,5 @@
 require("scripts/createMatrix.lua")
 require("scripts/turnMatrixIntoMap.lua")
-require("scripts/roomBuilder.lua")
 
 -- Command to generate the new surface and teleport the player
 commands.add_command("generate_surface", "Generates a new surface based on the matrix", function(command)
@@ -18,16 +17,9 @@ commands.add_command("generate_surface", "Generates a new surface based on the m
         for y = (map_size/2), map_size do
             if map_matrix[x][y] == 1 then
                 player.teleport({x,y}, dungeon_surface)
+                goto stop
             end
         end
     end
-end)
-
--- Define the roomBuilder command
-commands.add_command("roomBuilder", "Builds a room using the roomBuilder function", function(cmd)
-    -- Get the player who ran the command
-    local player = game.players[cmd.player_index]
-
-    -- Call the roomBuilder function
-    roomBuilder(player)
+    ::stop::
 end)

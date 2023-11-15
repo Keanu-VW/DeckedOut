@@ -289,6 +289,7 @@ function generate_map_matrix(map_size)
         end
     end
 
+    -- Making sure map is 100% accessible
     for x = 1, map_size do
         for y = 1, map_size do
             if map_matrix_backup[x][y] == 1 then
@@ -296,6 +297,8 @@ function generate_map_matrix(map_size)
             end
         end
     end
+
+
 
     return map_matrix
 end
