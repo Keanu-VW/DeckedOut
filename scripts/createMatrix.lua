@@ -300,5 +300,5 @@ function generate_map_matrix(map_size)
 
 
 
-    return map_matrix
+    return map_matrix, map_matrix_backup
 end
