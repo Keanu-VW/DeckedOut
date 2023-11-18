@@ -2,6 +2,28 @@ require("scripts/createMatrix.lua")
 require("scripts/turnMatrixIntoMap.lua")
 require("scripts/gameScript.lua")
 require("scripts/cardSystem.lua")
+require("scripts/GUI.lua")
+
+
+-- Falling rock test
+commands.add_command("fallingRock", "Summon the falling rock explosion above the player", function()
+    for _, player in pairs(game.players) do
+        if player.connected then
+            local player_position = player.position
+            local explosion_position = {player_position.x, player_position.y - 5}  -- Adjust the Y offset as needed
+
+            -- Create the explosion on the surface
+            player.surface.create_entity{
+                name = "falling-rock",
+                position = explosion_position,
+                force = game.forces["enemy"]
+            }
+        end
+    end
+end)
+
+
+
 
 -- Command to generate the new surface and teleport the player
 commands.add_command("generate_surface", "Generates a new surface based on the matrix", function(command)
@@ -17,51 +39,4 @@ commands.add_command("generate_surface", "Generates a new surface based on the m
 
     starting_game(player,dungeon_surface,room_matrix,map_size)
 
-end)
-
---Decktorio gui prefix = Dto
-
--- Button to open the dectorio deck editor
-script.on_event(defines.events.on_player_created, function(event)
-    -- Get the player
-    local player = game.get_player(event.player_index)
-    --Add button to screen top left (Layer 0)
-    player.gui.top.add{
-        type = "button",
-        name = "Dto_Decktorio",
-        caption = "Dectorio"
-    }
-end)
-
-script.on_event(defines.events.on_gui_click, function(event)
-    -- Get the player
-    local player = game.get_player(event.player_index)
-
-    -- Check if the clicked gui element was the Decktorio button
-    if event.element.name == "Dto_Decktorio" then
-
-        if player.gui.screen["Decktorio_Deck_Builder"] then
-            -- If open, close it
-            player.gui.screen["Decktorio_Deck_Builder"].destroy()
-        else
-            -- Create base gui element (Layer 0)
-            local Dto_base = player.gui.screen
-
-            -- Add a main frame (Layer 1)
-            local Dto_frame = Dto_base.add{type="frame", name="Decktorio_Deck_Builder", caption="Decktorio Deck Builder"}
-                -- Style main frame (Layer 1)
-                Dto_frame.style.size = {800, 800}
-                Dto_frame.auto_center = true
-
-            local Dto_content_frame = Dto_frame.add{type="frame", name="Dto_content_frame", direction="horizontal", style="Dto_content_frame"}
-
-                local Dto_left_frame = Dto_content_frame.add{type="frame", name="Dto_left_frame", direction="vertical", style="Dto_content_frame"}
-
-                local Dto_right_frame = Dto_content_frame.add{type="flow", name="Dto_right_frame", direction="vertical"}
-
-                        -- Add two frames in the right frame, each taking up half of the height
-                    local Dto_upper_right_frame = Dto_right_frame.add{type="frame", name="Dto_upper_right_frame", direction="horizontal", style="Dto_content_frame"}
-                    local Dto_lower_right_frame = Dto_right_frame.add{type="frame", name="Dto_lower_right_frame", direction="vertical", style="Dto_content_frame"}
-        end
-    end
 end)

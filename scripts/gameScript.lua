@@ -157,6 +157,11 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
         local success = false
         while success == false do
             local crumbleX, crumbleY = math.random(crumble_size, map_size - crumble_size), math.random(crumble_size, map_size - crumble_size)
+            player.surface.create_entity{
+                name = "falling-rock",
+                position = {crumbleX, crumbleY},
+                force = game.forces["enemy"]
+            }
             for x = 1, crumble_size do
                 for y = 1, crumble_size do
                     if room_matrix[crumbleX + x - 1][crumbleY + y - 1] == 0 then
@@ -168,6 +173,7 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
                 end
             end
         end
+
         game.print("Crumble")
     end
 
