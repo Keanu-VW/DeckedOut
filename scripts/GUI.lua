@@ -1,44 +1,7 @@
 --Decktorio gui prefix = Dto
 
-local equippedCards = {}
-local inventoryCards = {}
+local equippedCards = global.player_deck
 
-table.insert(equippedCards, {name = "Loot and Scoot", func = nil})
-table.insert(equippedCards, {name = "Run and Gun", func = nil})
-table.insert(equippedCards, {name = "Stumble", func = nil})
-table.insert(equippedCards, {name = "Crumble", func = nil})
-table.insert(equippedCards, {name = "Loot and Scoot", func = nil})
-table.insert(equippedCards, {name = "Run and Gun", func = nil})
-table.insert(equippedCards, {name = "Stumble", func = nil})
-table.insert(equippedCards, {name = "Crumble", func = nil})
-table.insert(equippedCards, {name = "Loot and Scoot", func = nil})
-table.insert(equippedCards, {name = "Run and Gun", func = nil})
-table.insert(equippedCards, {name = "Stumble", func = nil})
-table.insert(equippedCards, {name = "Crumble", func = nil})
-table.insert(equippedCards, {name = "Loot and Scoot", func = nil})
-table.insert(equippedCards, {name = "Run and Gun", func = nil})
-table.insert(equippedCards, {name = "Stumble", func = nil})
-table.insert(equippedCards, {name = "Crumble", func = nil})
-table.insert(equippedCards, {name = "Loot and Scoot", func = nil})
-table.insert(equippedCards, {name = "Run and Gun", func = nil})
-table.insert(equippedCards, {name = "Stumble", func = nil})
-table.insert(equippedCards, {name = "Crumble", func = nil})
-table.insert(equippedCards, {name = "Loot and Scoot", func = nil})
-table.insert(equippedCards, {name = "Run and Gun", func = nil})
-table.insert(equippedCards, {name = "Stumble", func = nil})
-table.insert(equippedCards, {name = "Crumble", func = nil})
-table.insert(equippedCards, {name = "Loot and Scoot", func = nil})
-table.insert(equippedCards, {name = "Run and Gun", func = nil})
-table.insert(equippedCards, {name = "Stumble", func = nil})
-table.insert(equippedCards, {name = "Crumble", func = nil})
-table.insert(equippedCards, {name = "Loot and Scoot", func = nil})
-table.insert(equippedCards, {name = "Run and Gun", func = nil})
-table.insert(equippedCards, {name = "Stumble", func = nil})
-table.insert(equippedCards, {name = "Crumble", func = nil})
-table.insert(equippedCards, {name = "Loot and Scoot", func = nil})
-table.insert(equippedCards, {name = "Run and Gun", func = nil})
-table.insert(equippedCards, {name = "Stumble", func = nil})
-table.insert(equippedCards, {name = "Crumble", func = nil})
 
 --[[Left frame: List of selected cards for the next run]]--
 local function updateLeftFrame(player, Dto_left_frame)
@@ -48,17 +11,14 @@ local function updateLeftFrame(player, Dto_left_frame)
 
     local Dto_equipped_scroll_pane = Dto_left_frame.add{type="scroll-pane", name="Dto_left_scroll_pane", direction="vertical"}
 
-    local cardNumber = 0
-
-    for _, cardData in pairs(equippedCards) do
-        local Dto_card_content_frame = Dto_equipped_scroll_pane.add{type="frame", name="Dto_card_frame_" ..cardNumber, direction="vertical", style="Dto_card_frame"}
+    for card = 1, #equippedCards do
+        local Dto_card_content_frame = Dto_equipped_scroll_pane.add{type="frame", name="Dto_card_frame_" ..card, direction="vertical", style="Dto_card_frame"}
         local Dto_card = Dto_card_content_frame.add{
-            type="button",
-            caption="Card: " .. cardData.name,
-            name="Dto_left_card_button_" .. cardData.name,
-            style="Dto_card_button"
+            type = "button",
+            caption = "Card: " .. equippedCards[card].name,
+            name = "Dto_left_card_button_" .. equippedCards[card].name,
+            style = "Dto_card_button"
         }
-        cardNumber = cardNumber + 1
     end
 end
 
@@ -67,7 +27,7 @@ script.on_event(defines.events.on_player_created, function(event)
     -- Get the player
     local player = game.get_player(event.player_index)
     --Add button to screen top left (Layer 0)
-    player.gui.top.add{
+    player.gui.top.add {
         type = "button",
         name = "Dto_Decktorio",
         caption = "Dectorio"

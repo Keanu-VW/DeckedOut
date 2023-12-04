@@ -299,6 +299,6 @@ function generate_map_matrix(map_size)
     end
 
 
-
-    return map_matrix, map_matrix_backup
+    global.map_matrix = map_matrix
+    global.room_map_matrix = map_matrix_backup
 end

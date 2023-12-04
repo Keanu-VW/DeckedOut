@@ -1,13 +1,16 @@
-local cards = {}
-
-
-table.insert(cards, {name = "Crumble", func = card_crumble})
-table.insert(cards, {name = "Debris", func = nil})
-table.insert(cards, {name = "clank", func = nil})
+Card = {
+    new = function(name, func, maxAmount, description)
+    local self = {}
+    self.name = name
+    self.func = func
+    self.maxAmount = maxAmount
+    self.description = description
+    return self
+end
+}
 
 -- Crumble: Map slowly crumbles away over time
-function card_crumble()
-    --Generate random matrix, take away this matrix from not needed tiles
+local function card_crumble()
     local crumble_size = 10
     local crumble_matrix = {}
     for x = 1, crumble_size do
@@ -46,12 +49,12 @@ function card_crumble()
 
     local success = false
     while success == false do
-        local crumbleX, crumbleY = math.random(crumble_size, map_size - crumble_size), math.random(crumble_size, map_size - crumble_size)
+        local crumbleX, crumbleY = math.random(crumble_size, global.map_size - crumble_size), math.random(crumble_size, global.map_size - crumble_size)
         for x = 1, crumble_size do
             for y = 1, crumble_size do
-                if room_matrix[crumbleX + x - 1][crumbleY + y - 1] == 0 then
+                if global.room_map_matrix[crumbleX + x - 1][crumbleY + y - 1] == 0 then
                     if crumble_matrix[x][y] == 1 then
-                        dungeon_surface.set_tiles({{name = "out-of-map", position = {x = crumbleX + x - 1, y = crumbleY + y - 1}}})
+                        global.map_surface.set_tiles({{name = "out-of-map", position = {x = crumbleX + x - 1, y = crumbleY + y - 1}}})
                         success = true
                     end
                 end
@@ -62,21 +65,59 @@ function card_crumble()
     game.print("Crumble")
 end
 
-function card_debris()
-    local randomX, randomY = math.random(1, map_size - 1), math.random(1, map_size)
-    player.surface.create_entity{
+-- Debris: Falling rocks from the ceiling create small explosions and debris everywhere
+local function card_debris()
+    local randomX, randomY = math.random(1, global.map_size - 1), math.random(1, global.map_size)
+
+    -- Create falling rock on first entity death
+    global.map_surface.create_entity{
         name = "falling-rock",
         position = {randomX, randomY},
         force = game.forces["enemy"]
     }
-    player.surface.create_entity{
-        name = "falling-rock",
-        position = {randomX, randomY},
-        force = game.forces["enemy"]
-    }
-    player.surface.create_entity{
-        name = "falling-rock",
-        position = {randomX, randomY},
-        force = game.forces["enemy"]
-    }
+    game.print("debris")
 end
+
+-- Clank: Spawn in enemies
+local function card_clank()
+    local success = false
+    while success == false do
+        local spitterX, spitterY = math.random(1, global.map_size), math.random(1, global.map_size)
+        local spitters = {"small-spitter", "medium-spitter", "big-spitter", "behemoth-spitter"}
+        if global.room_map_matrix[spitterX][spitterY] == 1 then
+            for i = 1, math.random(1,#spitters) do
+                global.map_surface.create_entity({name = spitters[i], position = {x = spitterX, y = spitterY}})
+                end
+            success = true
+            game.print("Clank")
+        end
+    end
+end
+
+-- Sneak: Block 2 clank
+local function card_sneak()
+    global.clankBlock = global.clankBlock + 2
+    game.print("Sneak")
+end
+
+-- Stability: Block 2 Crumble
+local function card_stability()
+    global.CrumbleBlock = global.CrumbleBlock + 2
+    game.print("Stability")
+end
+
+-- Debris Removal: Block 2 debris
+local function card_debris_removal()
+    global.debrisBlock = global.debrisBlock + 2
+    game.print("Debris Removal")
+end
+
+global.cards = {}
+global.cards["Sneak"] = Card.new("Sneak", card_sneak, 5, "Block 2 clank")
+global.cards["Stability"] = Card.new("Stability", card_stability, 5, "Block 2 crumble")
+global.cards["Debris Removal"] = Card.new("Debris Removal", card_debris_removal, 5, "Block 2 debris")
+global.cards["Crumble"] = Card.new("Crumble", card_crumble, 5, "Map slowly crumbles away over time")
+global.cards["Clank"] = Card.new("Clank", card_clank, 3, "Spitters appear randomly on the map")
+global.cards["Debris"] = Card.new("Debris", card_debris, 7, "Falling rocks and explosions")
+
+return global.cards
