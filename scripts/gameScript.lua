@@ -9,17 +9,7 @@
         break apart the map
 ]]--
 
-global.cards = require("cards")
-global.player_deck = {}
-table.insert(global.player_deck, global.cards["Sneak"])
-table.insert(global.player_deck, global.cards["Sneak"])
-table.insert(global.player_deck, global.cards["Sneak"])
-table.insert(global.player_deck, global.cards["Stability"])
-table.insert(global.player_deck, global.cards["Stability"])
-table.insert(global.player_deck, global.cards["Stability"])
-table.insert(global.player_deck, global.cards["Debris Removal"])
-table.insert(global.player_deck, global.cards["Debris Removal"])
-table.insert(global.player_deck, global.cards["Debris Removal"])
+
 
 
 
@@ -30,27 +20,15 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
     local map_size = map_size
 
 -- 1) Setting up stage
+    -- Decide spawn location for player
+    local spawnTopLeft = math.random() < 0.5
+
     -- Spawn player
     local spawnX, spawnY
-    for x = math.ceil(map_size/4), math.ceil(map_size/2) do
-        for y = math.ceil(map_size/4), math.ceil(map_size/2) do
-            if (
-                room_matrix[x + 1][y + 1] +
-                room_matrix[x + 1][y] +
-                room_matrix[x + 1][y - 1] +
-                room_matrix[x][y + 1] +
-                room_matrix[x][y] +
-                room_matrix[x][y - 1] +
-                room_matrix[x - 1][y + 1] +
-                room_matrix[x - 1][y] +
-                room_matrix[x - 1][y - 1]
-            ) == 9 then
-                spawnX, spawnY = x, y
-                goto stop
-            end
-        end
-    end
-    ::stop::
+    repeat
+        spawnX = math.ceil(map_size/4)
+        spawnY = spawnTopLeft and math.random(1, math.ceil(map_size/2)) or math.random(math.ceil(map_size/2)+1, map_size)
+    until room_matrix[spawnX][spawnY] == 1
 
     -- Teleport player
     player.teleport({spawnX, spawnY}, dungeon_surface)
@@ -66,27 +44,14 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
 
     -- Spawn artifact
     local artifactX, artifactY
-    for x = math.ceil(map_size/4) + math.ceil(map_size/4), math.ceil(map_size/2) + math.ceil(map_size/2) do
-        for y = math.ceil(map_size/4)* 2, math.ceil(map_size/2) * 2 do
-            if (
-                room_matrix[x + 1][y + 1] +
-                room_matrix[x + 1][y] +
-                room_matrix[x + 1][y - 1] +
-                room_matrix[x][y + 1] +
-                room_matrix[x][y] +
-                room_matrix[x][y - 1] +
-                room_matrix[x - 1][y + 1] +
-                room_matrix[x - 1][y] +
-                room_matrix[x - 1][y - 1]
-            ) == 9 then
-                artifactX, artifactY = x, y
-                goto spawnArtifact
-            end
-        end
-    end
-    ::spawnArtifact::
+    repeat
+        artifactX = math.ceil(map_size*3/4)
+        artifactY = spawnTopLeft and math.random(math.ceil(map_size/2)+1, map_size) or math.random(1, math.ceil(map_size/2))
+    until room_matrix[artifactX][artifactY] == 1
 
     dungeon_surface.spill_item_stack({artifactX, artifactY}, {name = "slimeArtifact", count = 1})
+
+    createDungeonGui(player)
 
 -- 2) Game stage
     local function checkForPlayerEnding()
@@ -113,42 +78,43 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
 
         if tickCounter % 32 == 0 then
             checkForPlayerEnding()
+            updateDungeonGui(player)
         end
 
-        -- 60 * 20
-        if tickCounter % 1200 == 0 then
-            -- If playerDeck empty -> insert clank and crumble card
+        -- 60 * 20 = 1200
+        if tickCounter % 60 == 0 then
+            -- insert clank or crumble card or debris
             local randomCardSelect = math.random(1, 3)
             if randomCardSelect == 1 then
-                table.insert(global.player_deck, global.cards["Clank"])
+                table.insert(global.equipped_cards, global.cards["Clank"])
             elseif randomCardSelect == 2 then
-                table.insert(global.player_deck, global.cards["Crumble"])
+                table.insert(global.equipped_cards, global.cards["Crumble"])
             else
-                table.insert(global.player_deck, global.cards["Debris"])
+                table.insert(global.equipped_cards, global.cards["Debris"])
             end
 
             -- Shuffle Deck
-            for i = #global.player_deck, 2, -1 do
+            for i = #global.equipped_cards, 2, -1 do
                 local j = math.random(i)
-                global.player_deck[i], global.player_deck[j] = global.player_deck[j], global.player_deck[i]
+                global.equipped_cards[i], global.equipped_cards[j] = global.equipped_cards[j], global.equipped_cards[i]
             end
 
             -- Play card
-            if global.player_deck[1].name == "Crumble" and global.CrumbleBlock > 0 then
+            if global.equipped_cards[1].name == "Crumble" and global.CrumbleBlock > 0 then
                 game.print("Blocked Crumble")
-                table.remove(global.player_deck, 1)
+                table.remove(global.equipped_cards, 1)
                 global.CrumbleBlock = global.CrumbleBlock - 1
-            elseif global.player_deck[1].name == "Clank" and global.clankBlock > 0 then
+            elseif global.equipped_cards[1].name == "Clank" and global.clankBlock > 0 then
                 game.print("Blocked Clank")
-                table.remove(global.player_deck, 1)
+                table.remove(global.equipped_cards, 1)
                 global.clankBlock = global.clankBlock - 1
-            elseif global.player_deck[1].name == "Debris" and global.debrisBlock > 0 then
+            elseif global.equipped_cards[1].name == "Debris" and global.debrisBlock > 0 then
                 game.print("Blocked Debris")
-                table.remove(global.player_deck, 1)
+                table.remove(global.equipped_cards, 1)
                 global.debrisBlock = global.debrisBlock - 1
             else
-                global.player_deck[1].func()
-                table.remove(global.player_deck, 1)
+                global.equipped_cards[1].func()
+                table.remove(global.equipped_cards, 1)
             end
         end
 

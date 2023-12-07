@@ -12,7 +12,7 @@ fallingRockExplosion.animations = {
         frame_count = 18,
         line_length = 6,  -- Adjusted to match the number of frames in a single row
         animation_speed = 0.2,
-        scale = 5
+        scale = 2
     }
 }
 fallingRockExplosion.light = {intensity = 1, size = 20}

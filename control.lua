@@ -1,6 +1,7 @@
 require("scripts/sharedData.lua")
 require("scripts/cards.lua")
-require("scripts/GUI.lua")
+require("scripts/DeckBuilderGui.lua")
+require("scripts/DungeonGui.lua")
 
 require("scripts/createMatrix.lua")
 require("scripts/generateDungeonSurface.lua")
@@ -11,7 +12,7 @@ script.on_init(function(event)
     commands.add_command("generate_surface", "Generates a new surface based on the matrix", function(command)
         local player = game.get_player(command.player_index)  -- Get the player who ran the command
 
-        global.map_size = 800 -- Set the map size
+        global.map_size = 400 -- Set the map size
 
         game.print("Creating matrix")
         generate_map_matrix(global.map_size)  -- Assume createMatrix is already defined and generates your matrix

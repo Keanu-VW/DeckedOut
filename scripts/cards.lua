@@ -67,15 +67,25 @@ end
 
 -- Debris: Falling rocks from the ceiling create small explosions and debris everywhere
 local function card_debris()
-    local randomX, randomY = math.random(1, global.map_size - 1), math.random(1, global.map_size)
-
-    -- Create falling rock on first entity death
-    global.map_surface.create_entity{
-        name = "falling-rock",
-        position = {randomX, randomY},
-        force = game.forces["enemy"]
-    }
-    game.print("debris")
+    local success = false
+    while success == false do
+        local randomX, randomY = math.random(1, global.map_size - 1), math.random(1, global.map_size)
+        -- Check if the selected position is a walkable tile
+        if global.room_map_matrix[randomX][randomY] == 1 then
+            -- Create falling rock
+            global.map_surface.create_entity{
+                name = "falling-rock",
+                position = {randomX, randomY},
+                force = game.forces["enemy"]
+            }
+            global.map_surface.create_entity({
+                name = "rock-big",
+                position = {randomX,randomY}
+            })
+            game.print("debris")
+            success = true
+        end
+    end
 end
 
 -- Clank: Spawn in enemies
@@ -112,6 +122,32 @@ local function card_debris_removal()
     game.print("Debris Removal")
 end
 
+-- Summon Ally: Spawn a group of friendly spitters at the player's location
+local function card_summon_ally()
+    -- Get the player's current position
+    local player_position = game.players[1].position
+
+    -- Generate a random number for the number of allies to spawn
+    local num_allies = math.random(3, 5)
+    local spitters = {"small-spitter", "medium-spitter", "big-spitter", "behemoth-spitter"}
+    
+    -- For each ally to spawn, create a friendly spitter at a position near the player
+    for i = 1, num_allies do
+        -- Generate a random offset for the spitter's position
+        local offset = {x = math.random(-3, 3), y = math.random(-3, 3)}
+
+        -- Create the spitter at the player's position plus the offset
+        global.map_surface.create_entity({
+            name = spitters[math.random(1,#spitters)],
+            position = {x = player_position.x + offset.x, y = player_position.y + offset.y},
+            force = game.forces["player"]
+        })
+    end
+
+    game.print("Summon Ally")
+end
+
+
 global.cards = {}
 global.cards["Sneak"] = Card.new("Sneak", card_sneak, 5, "Block 2 clank")
 global.cards["Stability"] = Card.new("Stability", card_stability, 5, "Block 2 crumble")
@@ -119,5 +155,6 @@ global.cards["Debris Removal"] = Card.new("Debris Removal", card_debris_removal,
 global.cards["Crumble"] = Card.new("Crumble", card_crumble, 5, "Map slowly crumbles away over time")
 global.cards["Clank"] = Card.new("Clank", card_clank, 3, "Spitters appear randomly on the map")
 global.cards["Debris"] = Card.new("Debris", card_debris, 7, "Falling rocks and explosions")
+global.cards["Summon Ally"] = Card.new("Summon Ally", card_summon_ally, 3, "Spawn a group of friendly spitters at your location")
 
 return global.cards
