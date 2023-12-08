@@ -73,10 +73,11 @@ local function card_debris()
         -- Check if the selected position is a walkable tile
         if global.room_map_matrix[randomX][randomY] == 1 then
             -- Create falling rock
-            global.map_surface.create_entity{
-                name = "falling-rock",
-                position = {randomX, randomY},
-                force = game.forces["enemy"]
+            rendering.draw_animation{
+                animation = "falling-rock",
+                target = {randomX, randomY},
+                surface = global.map_surface,
+                time_to_live = 90
             }
             global.map_surface.create_entity({
                 name = "rock-big",
@@ -143,10 +144,8 @@ local function card_summon_ally()
             force = game.forces["player"]
         })
     end
-
     game.print("Summon Ally")
 end
-
 
 global.cards = {}
 global.cards["Sneak"] = Card.new("Sneak", card_sneak, 5, "Block 2 clank")

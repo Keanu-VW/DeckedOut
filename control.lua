@@ -2,10 +2,12 @@ require("scripts/sharedData.lua")
 require("scripts/cards.lua")
 require("scripts/DeckBuilderGui.lua")
 require("scripts/DungeonGui.lua")
+require("scripts/shopGui.lua")
 
 require("scripts/createMatrix.lua")
 require("scripts/generateDungeonSurface.lua")
 require("scripts/gameScript.lua")
+require("scripts/gameEnd.lua")
 
 script.on_init(function(event)
     -- Command to generate the new surface and teleport the player

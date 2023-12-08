@@ -1,5 +1,5 @@
 -- Import necessary libraries
-local gui = require("__flib__/gui.lua")
+gui = require("__flib__/gui.lua")
 
 -- Initialize global variables
 global.cards = require("cards")

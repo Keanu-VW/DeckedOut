@@ -19,7 +19,7 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
     local room_matrix = room_matrix
     local map_size = map_size
 
--- 1) Setting up stage
+    -- 1) Setting up stage
     -- Decide spawn location for player
     local spawnTopLeft = math.random() < 0.5
 
@@ -52,7 +52,7 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
     dungeon_surface.spill_item_stack({artifactX, artifactY}, {name = "slimeArtifact", count = 1})
 
     createDungeonGui(player)
-
+    
 -- 2) Game stage
     local function checkForPlayerEnding()
         local player_position = player.position
@@ -67,12 +67,17 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
             local player_inventory = player.get_main_inventory()
             if player_inventory.get_item_count("slimeArtifact") > 0 then
                 game.print("Got the artifact, ending dungeon run...")
+                gameEnd(player, dungeon_surface)
             end
         end
     end
-
+    
     local tickCounter = 0
+    global.is_game_running = true
     script.on_event(defines.events.on_tick, function(event)
+        if not global.is_game_running then
+            return
+        end
         -- 60 ticks == 1 second
         tickCounter = tickCounter + 1
 
@@ -123,3 +128,27 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
         end
     end)
 end
+
+
+commands.add_command("card", "Execute a card", function(command)
+    -- Get the name of the card from the command parameters
+    local card_name = command.parameter
+
+    -- Check if the card exists in the global cards table
+    if global.cards[card_name] then
+        -- Execute the card's function
+        global.cards[card_name].func()
+        game.print("Executed card: " .. card_name)
+    else
+        -- Print an error message if the card does not exist
+        game.print("Card not found: " .. card_name)
+    end
+end)
+
+commands.add_command("cards", "Print all existing cards", function()
+    -- Loop over the cards in the global cards table
+    for card_name, card in pairs(global.cards) do
+        -- Print the name of each card
+        game.print(card_name)
+    end
+end)

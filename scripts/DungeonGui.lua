@@ -29,3 +29,7 @@ function updateDungeonGui(player)
     dungeonGui["Dto_DungeonGui_Button_Clank"].caption = "ClankBlock = " .. global.clankBlock
     dungeonGui["Dto_DungeonGui_Button_Debris"].caption = "DebrisBlock = " .. global.debrisBlock
 end
+
+function deleteDungeonGui(player)
+    player.gui.screen["Dto_DungeonGui"].destroy()
+end
