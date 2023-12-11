@@ -1,18 +1,3 @@
---[[
-    1) Setting up stage:
-        Spawn artifact
-        teleport player
-
-    2) Game stage:
-        Check if player has artifact and is standing on spawn
-        spawn in enemies
-        break apart the map
-]]--
-
-
-
-
-
 function starting_game(player,dungeon_surface,room_matrix,map_size)
     local player = player
     local dungeon_surface = dungeon_surface
@@ -109,10 +94,10 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
                 game.print("Blocked Crumble")
                 table.remove(global.equipped_cards, 1)
                 global.CrumbleBlock = global.CrumbleBlock - 1
-            elseif global.equipped_cards[1].name == "Clank" and global.clankBlock > 0 then
+            elseif global.equipped_cards[1].name == "Clank" and global.clank_block > 0 then
                 game.print("Blocked Clank")
                 table.remove(global.equipped_cards, 1)
-                global.clankBlock = global.clankBlock - 1
+                global.clank_block = global.clank_block - 1
             elseif global.equipped_cards[1].name == "Debris" and global.debrisBlock > 0 then
                 game.print("Blocked Debris")
                 table.remove(global.equipped_cards, 1)

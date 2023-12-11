@@ -1,0 +1,11 @@
+﻿Error Handling: Currently, your code does not seem to handle any potential errors or exceptions. It's a good practice to anticipate potential issues and handle them gracefully. For example, what happens if a GUI file fails to load or a function fails to execute? Adding error handling can make your code more robust and easier to debug.  
+Code Comments: While your code is quite readable, adding more comments, especially for complex logic, can make it easier to understand and maintain. This is particularly important if other developers will be working on this project.  
+Consistent Naming Conventions: Ensure that you are using consistent naming conventions throughout your code. This includes variable names, function names, and file names. Consistent naming conventions make your code easier to read and understand.  
+Code Duplication: There seems to be some code duplication in your scripts. For example, the code to destroy a GUI is repeated in multiple places. Consider creating a function for this to reduce code duplication and make your code easier to maintain.  
+GUI Destruction: In your mainGui.lua file, you're destroying the shop GUI every time the "shop" command is run. If the GUI doesn't exist, this could potentially cause an error. Consider checking if the GUI exists before trying to destroy it.  
+Event Handling: In your shopGui.lua file, you're adding an event handler inside the createShopGui function. This means a new event handler is added every time this function is called, which could lead to unexpected behavior. Consider moving the event handler outside of this function.  
+Global Variables: In your deckBuilderGui.lua file, you're using global variables. While this is not necessarily a problem, it can lead to issues with variable scope and mutability. Consider if there's a way to achieve the same functionality with local variables or through other means.
+
+Error while running command "generate_surface": __DeckedOut__/control.lua:11: attempt to call global 'on_game_start' (a nil value)
+stack traceback:
+	__DeckedOut__/control.lua:11: in function <__DeckedOut__/control.lua:8>

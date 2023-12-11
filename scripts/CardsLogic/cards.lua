@@ -1,13 +1,5 @@
-Card = {
-    new = function(name, func, maxAmount, description)
-    local self = {}
-    self.name = name
-    self.func = func
-    self.maxAmount = maxAmount
-    self.description = description
-    return self
-end
-}
+﻿require("scripts/CardsLogic/cardClass.lua")
+
 
 -- Crumble: Map slowly crumbles away over time
 local function card_crumble()
@@ -28,14 +20,14 @@ local function card_crumble()
         for x = 2, crumble_size - 1 do
             for y = 2, crumble_size - 1 do
                 local cellHealth =
-                    crumble_matrix[x+1][y+1] +
-                    crumble_matrix[x+1][y] +
-                    crumble_matrix[x+1][y-1] +
-                    crumble_matrix[x][y+1] +
-                    crumble_matrix[x][y-1] +
-                    crumble_matrix[x-1][y+1] +
-                    crumble_matrix[x-1][y] +
-                    crumble_matrix[x-1][y-1]
+                crumble_matrix[x+1][y+1] +
+                        crumble_matrix[x+1][y] +
+                        crumble_matrix[x+1][y-1] +
+                        crumble_matrix[x][y+1] +
+                        crumble_matrix[x][y-1] +
+                        crumble_matrix[x-1][y+1] +
+                        crumble_matrix[x-1][y] +
+                        crumble_matrix[x-1][y-1]
                 if crumble_matrix[x][y] == 1 and cellHealth >= 4 then
                     crumble_matrix[x][y] = 1
                 elseif crumble_matrix[x][y] == 0 and cellHealth >= 5 then
@@ -98,7 +90,7 @@ local function card_clank()
         if global.room_map_matrix[spitterX][spitterY] == 1 then
             for i = 1, math.random(1,#spitters) do
                 global.map_surface.create_entity({name = spitters[i], position = {x = spitterX, y = spitterY}})
-                end
+            end
             success = true
             game.print("Clank")
         end
@@ -107,7 +99,7 @@ end
 
 -- Sneak: Block 2 clank
 local function card_sneak()
-    global.clankBlock = global.clankBlock + 2
+    global.clank_block = global.clank_block + 2
     game.print("Sneak")
 end
 
@@ -131,7 +123,7 @@ local function card_summon_ally()
     -- Generate a random number for the number of allies to spawn
     local num_allies = math.random(3, 5)
     local spitters = {"small-spitter", "medium-spitter", "big-spitter", "behemoth-spitter"}
-    
+
     -- For each ally to spawn, create a friendly spitter at a position near the player
     for i = 1, num_allies do
         -- Generate a random offset for the spitter's position
@@ -147,13 +139,32 @@ local function card_summon_ally()
     game.print("Summon Ally")
 end
 
-global.cards = {}
-global.cards["Sneak"] = Card.new("Sneak", card_sneak, 5, "Block 2 clank")
-global.cards["Stability"] = Card.new("Stability", card_stability, 5, "Block 2 crumble")
-global.cards["Debris Removal"] = Card.new("Debris Removal", card_debris_removal, 5, "Block 2 debris")
-global.cards["Crumble"] = Card.new("Crumble", card_crumble, 5, "Map slowly crumbles away over time")
-global.cards["Clank"] = Card.new("Clank", card_clank, 3, "Spitters appear randomly on the map")
-global.cards["Debris"] = Card.new("Debris", card_debris, 7, "Falling rocks and explosions")
-global.cards["Summon Ally"] = Card.new("Summon Ally", card_summon_ally, 3, "Spawn a group of friendly spitters at your location")
+function createCards()
+    Card.new(
+            "testCard",
+            function() game.print("This is a test card") end,
+            1,
+            "This is a test card")
+    Card.new("Sneak", card_sneak, 5, "Block 2 clank")
+    Card.new("Stability", card_stability, 5, "Block 2 crumble")
+    Card.new("Debris Removal", card_debris_removal, 5, "Block 2 debris")
+    Card.new("Crumble", card_crumble, 5, "Map slowly crumbles away over time")
+    Card.new("Clank", card_clank, 3, "Spitters appear randomly on the map")
+    Card.new("Debris", card_debris, 7, "Falling rocks and explosions")
+    Card.new("Summon Ally", card_summon_ally, 3, "Spawn a group of friendly spitters at your location")
+end
 
-return global.cards
+createCards()
+
+-- Function to add a card to the player's deck
+function addCardToDeck(cardName, times)
+    for i = 1, times do
+        table.insert(global.DTO.inventory_cards, global.DTO.cards[cardName])
+    end
+end
+
+-- Add cards to the player's deck
+addCardToDeck("Sneak", 3)
+addCardToDeck("Stability", 3)
+addCardToDeck("Debris Removal", 3)
+addCardToDeck("Summon Ally", 3)
