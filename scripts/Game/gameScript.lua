@@ -13,11 +13,11 @@
 
 
 
-function starting_game(player,dungeon_surface,room_matrix,map_size)
-    local player = player
-    local dungeon_surface = dungeon_surface
-    local room_matrix = room_matrix
-    local map_size = map_size
+function starting_game()
+    local player = global.Player.player
+    local dungeon_surface = global.GameState.map_surface
+    local room_matrix = global.GameState.room_map_matrix
+    local map_size =global.GameState.map_size
 
     -- 1) Setting up stage
     -- Decide spawn location for player
@@ -72,10 +72,11 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
         end
     end
     
+    local Deck = global.Player.equipped_cards
     local tickCounter = 0
-    global.is_game_running = true
+    global.GameState.is_game_running = true
     script.on_event(defines.events.on_tick, function(event)
-        if not global.is_game_running then
+        if not global.GameState.is_game_running then
             return
         end
         -- 60 ticks == 1 second
@@ -91,35 +92,35 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
             -- insert clank or crumble card or debris
             local randomCardSelect = math.random(1, 3)
             if randomCardSelect == 1 then
-                table.insert(global.equipped_cards, global.cards["Clank"])
+                table.insert(Deck, global.Cards["Clank"])
             elseif randomCardSelect == 2 then
-                table.insert(global.equipped_cards, global.cards["Crumble"])
+                table.insert(Deck, global.Cards["Crumble"])
             else
-                table.insert(global.equipped_cards, global.cards["Debris"])
+                table.insert(Deck, global.Cards["Debris"])
             end
 
             -- Shuffle Deck
-            for i = #global.equipped_cards, 2, -1 do
+            for i = #Deck, 2, -1 do
                 local j = math.random(i)
-                global.equipped_cards[i], global.equipped_cards[j] = global.equipped_cards[j], global.equipped_cards[i]
+                Deck[i], Deck[j] = Deck[j], Deck[i]
             end
 
             -- Play card
-            if global.equipped_cards[1].name == "Crumble" and global.CrumbleBlock > 0 then
+            if Deck[1].name == "Crumble" and global.GameState.crumble_block > 0 then
                 game.print("Blocked Crumble")
-                table.remove(global.equipped_cards, 1)
-                global.CrumbleBlock = global.CrumbleBlock - 1
-            elseif global.equipped_cards[1].name == "Clank" and global.clankBlock > 0 then
+                table.remove(Deck, 1)
+                global.GameState.crumble_block = global.GameState.crumble_block - 1
+            elseif Deck[1].name == "Clank" and global.GameState.clank_block > 0 then
                 game.print("Blocked Clank")
-                table.remove(global.equipped_cards, 1)
-                global.clankBlock = global.clankBlock - 1
-            elseif global.equipped_cards[1].name == "Debris" and global.debrisBlock > 0 then
+                table.remove(Deck, 1)
+                global.GameState.clank_block = global.GameState.clank_block - 1
+            elseif Deck[1].name == "Debris" and global.GameState.debris_block > 0 then
                 game.print("Blocked Debris")
-                table.remove(global.equipped_cards, 1)
-                global.debrisBlock = global.debrisBlock - 1
+                table.remove(Deck, 1)
+                global.GameState.debris_block= global.GameState.debris_block - 1
             else
-                global.equipped_cards[1].func()
-                table.remove(global.equipped_cards, 1)
+                Deck[1].func()
+                table.remove(Deck, 1)
             end
         end
 
@@ -135,9 +136,9 @@ commands.add_command("card", "Execute a card", function(command)
     local card_name = command.parameter
 
     -- Check if the card exists in the global cards table
-    if global.cards[card_name] then
+    if global.Cards[card_name] then
         -- Execute the card's function
-        global.cards[card_name].func()
+        global.Cards[card_name].func()
         game.print("Executed card: " .. card_name)
     else
         -- Print an error message if the card does not exist
@@ -147,7 +148,7 @@ end)
 
 commands.add_command("cards", "Print all existing cards", function()
     -- Loop over the cards in the global cards table
-    for card_name, card in pairs(global.cards) do
+    for card_name, card in pairs(global.Cards) do
         -- Print the name of each card
         game.print(card_name)
     end

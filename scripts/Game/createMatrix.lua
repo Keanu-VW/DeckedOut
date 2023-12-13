@@ -1,4 +1,5 @@
-function generate_map_matrix(map_size)
+function generate_map_matrix()
+    local map_size = global.GameState.map_size
     print("Generating Map of size: "..map_size)
 
     --[[
@@ -299,6 +300,6 @@ function generate_map_matrix(map_size)
     end
 
 
-    global.map_matrix = map_matrix
-    global.room_map_matrix = map_matrix_backup
+    global.GameState.map_matrix = map_matrix
+    global.GameState.room_map_matrix = map_matrix_backup
 end

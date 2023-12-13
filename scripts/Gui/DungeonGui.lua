@@ -9,25 +9,25 @@ function createDungeonGui(player)
     dungeonGui.add{
         type = "button",
         name = "Dto_DungeonGui_Button_Crumble",
-        caption = "CrumbleBlock = " .. global.CrumbleBlock
+        caption = "CrumbleBlock = " .. global.GameState.crumble_block
     }
     dungeonGui.add{
         type = "button",
         name = "Dto_DungeonGui_Button_Clank",
-        caption = "ClankBlock = " .. global.clankBlock
+        caption = "ClankBlock = " .. global.GameState.clank_block
     }
     dungeonGui.add{
         type = "button",
         name = "Dto_DungeonGui_Button_Debris",
-        caption = "DebrisBlock = " .. global.debrisBlock
+        caption = "DebrisBlock = " .. global.GameState.debris_block
     }
 end
 
 function updateDungeonGui(player) 
     local dungeonGui = player.gui.screen["Dto_DungeonGui"]
-    dungeonGui["Dto_DungeonGui_Button_Crumble"].caption = "CrumbleBlock = " .. global.CrumbleBlock
-    dungeonGui["Dto_DungeonGui_Button_Clank"].caption = "ClankBlock = " .. global.clankBlock
-    dungeonGui["Dto_DungeonGui_Button_Debris"].caption = "DebrisBlock = " .. global.debrisBlock
+    dungeonGui["Dto_DungeonGui_Button_Crumble"].caption = "CrumbleBlock = " .. global.GameState.crumble_block
+    dungeonGui["Dto_DungeonGui_Button_Clank"].caption = "ClankBlock = " .. global.GameState.clank_block
+    dungeonGui["Dto_DungeonGui_Button_Debris"].caption = "DebrisBlock = " .. global.GameState.debris_block
 end
 
 function deleteDungeonGui(player)

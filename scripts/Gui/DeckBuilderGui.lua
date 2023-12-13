@@ -1,15 +1,10 @@
 -- Import necessary libraries
 gui = require("__flib__/gui.lua")
 
--- Initialize global variables
-global.cards = require("cards")
-global.player_deck = {}
-global.equipped_cards = {}
-
 -- Function to add a card to the player's deck
 local function addCardToDeck(cardName, times)
     for i = 1, times do
-        table.insert(global.player_deck, global.cards[cardName])
+        table.insert(global.Player.inventory_cards, global.Cards[cardName])
     end
 end
 
@@ -41,7 +36,7 @@ end
 local function updateLeftFrame(player, leftFrame)
     leftFrame.clear()
     local equippedScrollPane = gui.add(leftFrame, {type="scroll-pane", name="Dto_equipped_scroll_pane", direction="vertical", style="flib_shallow_scroll_pane"})
-    for index, card in ipairs(global.equipped_cards) do
+    for index, card in ipairs(global.Player.equipped_cards) do
         createCardButton(equippedScrollPane, card, index, "equipped_cards")
     end
 end
@@ -50,7 +45,7 @@ end
 local function updateBottomRightFrame(player, bottomRightFrame)
     bottomRightFrame.clear()
     local playerDeckScrollPane = gui.add(bottomRightFrame, {type="scroll-pane", name="Dto_player_deck_pane", direction="vertical", style="flib_shallow_scroll_pane"})
-    for index, card in ipairs(global.player_deck) do
+    for index, card in ipairs(global.Player.inventory_cards) do
         createCardButton(playerDeckScrollPane, card, index, "player_deck")
     end
 end
@@ -131,19 +126,19 @@ script.on_event(defines.events.on_gui_click, function(event)
             local source = action.source
             if source == "player_deck" then
                 -- Move the card from player_deck to equipped_cards
-                for index, card in ipairs(global.player_deck) do
+                for index, card in ipairs(global.Player.inventory_cards) do
                     if card.name == card_name then
-                        table.remove(global.player_deck, index)
-                        table.insert(global.equipped_cards, card)
+                        table.remove(global.Player.inventory_cards, index)
+                        table.insert(global.Player.equipped_cards, card)
                         break
                     end
                 end
             else
                 -- Move the card from equipped_cards to player_deck
-                for index, card in ipairs(global.equipped_cards) do
+                for index, card in ipairs(global.Player.equipped_cards) do
                     if card.name == card_name then
-                        table.remove(global.equipped_cards, index)
-                        table.insert(global.player_deck, card)
+                        table.remove(global.Player.equipped_cards, index)
+                        table.insert(global.Player.inventory_cards, card)
                         break
                     end
                 end
