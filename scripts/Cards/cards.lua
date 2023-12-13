@@ -131,11 +131,7 @@ end
 
 -- Sneak: Block 2 clank
 local function card_sneak()
-<<<<<<<< HEAD:scripts/Cards/cards.lua
     global.GameState.clank_block = global.GameState.clank_block + 2
-========
-    global.clank_block = global.clank_block + 2
->>>>>>>> origin/master:old_scripts/cards.lua
     game.print("Sneak")
 end
 

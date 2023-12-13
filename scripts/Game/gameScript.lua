@@ -1,4 +1,4 @@
-<<<<<<<< HEAD:scripts/Game/gameScript.lua
+
 --[[
     1) Setting up stage:
         Spawn artifact
@@ -19,14 +19,7 @@ function starting_game()
     local dungeon_surface = global.GameState.map_surface
     local room_matrix = global.GameState.room_map_matrix
     local map_size =global.GameState.map_size
-========
-function starting_game(player,dungeon_surface,room_matrix,map_size)
-    local player = player
-    local dungeon_surface = dungeon_surface
-    local room_matrix = room_matrix
-    local map_size = map_size
->>>>>>>> origin/master:old_scripts/gameScript.lua
-
+    
     -- 1) Setting up stage
     -- Decide spawn location for player
     local spawnTopLeft = math.random() < 0.5
@@ -116,7 +109,6 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
             -- Play card
             if Deck[1].name == "Crumble" and global.GameState.crumble_block > 0 then
                 game.print("Blocked Crumble")
-<<<<<<<< HEAD:scripts/Game/gameScript.lua
                 table.remove(Deck, 1)
                 global.GameState.crumble_block = global.GameState.crumble_block - 1
             elseif Deck[1].name == "Clank" and global.GameState.clank_block > 0 then
@@ -124,15 +116,6 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
                 table.remove(Deck, 1)
                 global.GameState.clank_block = global.GameState.clank_block - 1
             elseif Deck[1].name == "Debris" and global.GameState.debris_block > 0 then
-========
-                table.remove(global.equipped_cards, 1)
-                global.CrumbleBlock = global.CrumbleBlock - 1
-            elseif global.equipped_cards[1].name == "Clank" and global.clank_block > 0 then
-                game.print("Blocked Clank")
-                table.remove(global.equipped_cards, 1)
-                global.clank_block = global.clank_block - 1
-            elseif global.equipped_cards[1].name == "Debris" and global.debrisBlock > 0 then
->>>>>>>> origin/master:old_scripts/gameScript.lua
                 game.print("Blocked Debris")
                 table.remove(Deck, 1)
                 global.GameState.debris_block= global.GameState.debris_block - 1
@@ -148,26 +131,3 @@ function starting_game(player,dungeon_surface,room_matrix,map_size)
     end)
 end
 
-
-commands.add_command("card", "Execute a card", function(command)
-    -- Get the name of the card from the command parameters
-    local card_name = command.parameter
-
-    -- Check if the card exists in the global cards table
-    if global.Cards[card_name] then
-        -- Execute the card's function
-        global.Cards[card_name].func()
-        game.print("Executed card: " .. card_name)
-    else
-        -- Print an error message if the card does not exist
-        game.print("Card not found: " .. card_name)
-    end
-end)
-
-commands.add_command("cards", "Print all existing cards", function()
-    -- Loop over the cards in the global cards table
-    for card_name, card in pairs(global.Cards) do
-        -- Print the name of each card
-        game.print(card_name)
-    end
-end)
