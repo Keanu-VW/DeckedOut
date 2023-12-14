@@ -33,6 +33,24 @@ Card = {
 end
 }
 
+-- Treasure: Drops a random amount of shards or gold plates scattered across the map
+local function card_treasure()
+    local success = false
+    while success == false do
+        local TreasureX, TreasureY = math.random(1, global.GameState.map_size), math.random(1, global.GameState.map_size)
+        if global.GameState.room_map_matrix[TreasureX][TreasureY] == 1 then
+            -- Choose a random item type (either "alienShard" or "goldPlate")
+            local itemType = math.random() < 0.5 and "alienShard" or "goldPlate"
+            -- Generate a random amount for the item count
+            local itemCount = math.random(1, 10)
+            -- Spill the items at the treasure position
+            global.GameState.map_surface.spill_item_stack({TreasureX, TreasureY}, {name = itemType, count = itemCount})
+            success = true
+            game.print("Treasure")
+        end
+    end
+end
+
 -- Crumble: Map slowly crumbles away over time
 local function card_crumble()
     local crumble_size = 10
@@ -172,6 +190,7 @@ local function card_summon_ally()
 end
 
 global.Cards = {}
+Card.new("Treasure", card_treasure, 5, "Drops a random amount of shards or gold plates scattered across the map")
 Card.new("Sneak", card_sneak, 5, "Block 2 clank")
 Card.new("Stability", card_stability, 5, "Block 2 crumble")
 Card.new("Debris Removal", card_debris_removal, 5, "Block 2 debris")

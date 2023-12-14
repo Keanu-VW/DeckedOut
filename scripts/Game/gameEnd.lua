@@ -1,8 +1,8 @@
 ﻿function gameEnd(player, dungeon_surface)
+    deleteDungeonGui(player)
     player.teleport({0,0}, game.surfaces["nauvis"])
     dungeon_surface.clear()
-    global.is_game_running = false
-    deleteDungeonGui(player)
+    global.GameState.is_game_running = false
     createShopGui(player)
     --[[
         1) Teleport player back to main surface

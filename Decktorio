@@ -2,6 +2,7 @@ The mod Decked Out (0.0.1) caused a non-recoverable error.
 Please report this error to the mod author.
 
 Error while running event DeckedOut::on_tick (ID 0)
-__DeckedOut__/scripts/Game/gameScript.lua:121: attempt to index field 'equipped_cards' (a nil value)
+__DeckedOut__/scripts/Gui/DungeonGui.lua:28: attempt to index local 'dungeonGui' (a nil value)
 stack traceback:
-	__DeckedOut__/scripts/Game/gameScript.lua:121: in function <__DeckedOut__/scripts/Game/gameScript.lua:79>
+	__DeckedOut__/scripts/Gui/DungeonGui.lua:28: in function 'updateDungeonGui'
+	__DeckedOut__/scripts/Game/gameScript.lua:88: in function <__DeckedOut__/scripts/Game/gameScript.lua:79>

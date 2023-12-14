@@ -13,6 +13,7 @@ addCardToDeck("Sneak", 3)
 addCardToDeck("Stability", 3)
 addCardToDeck("Debris Removal", 3)
 addCardToDeck("Summon Ally", 3)
+addCardToDeck("Treasure", 3)
 
 -- Function to create a card button
 local function createCardButton(scrollPane, card, index, source)

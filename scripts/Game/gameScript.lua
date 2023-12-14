@@ -50,7 +50,7 @@ function starting_game()
         artifactY = spawnTopLeft and math.random(math.ceil(map_size/2)+1, map_size) or math.random(1, math.ceil(map_size/2))
     until room_matrix[artifactX][artifactY] == 1
 
-    dungeon_surface.spill_item_stack({artifactX, artifactY}, {name = "slimeArtifact", count = 1})
+    dungeon_surface.spill_item_stack({artifactX, artifactY}, {name = "alienEgg", count = 1})
 
     createDungeonGui(player)
     
@@ -66,7 +66,7 @@ function starting_game()
             player_position.y <= spawnY + 1
         ) then
             local player_inventory = player.get_main_inventory()
-            if player_inventory.get_item_count("slimeArtifact") > 0 then
+            if player_inventory.get_item_count("alienEgg") > 0 then
                 game.print("Got the artifact, ending dungeon run...")
                 gameEnd(player, dungeon_surface)
             end
@@ -84,10 +84,10 @@ function starting_game()
         tickCounter = tickCounter + 1
 
         if tickCounter % 32 == 0 then
-            checkForPlayerEnding()
             updateDungeonGui(player)
+            checkForPlayerEnding()
         end
-
+        
         -- 60 * 20 = 1200
         if tickCounter % 60 == 0 then
             -- insert clank or crumble card or debris

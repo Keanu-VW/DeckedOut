@@ -1,17 +1,17 @@
-local slimeArtifact = table.deepcopy(data.raw["item"]["iron-gear-wheel"]
+local alienEgg = table.deepcopy(data.raw["item"]["iron-gear-wheel"]
 )
 
-slimeArtifact.name = "slimeArtifact"
-slimeArtifact.icon = "__DeckedOut__/graphics/artifacts/slimeArtifact.png"
-slimeArtifact.icon_size = 112
-slimeArtifact.stack_size = 1
-slimeArtifact.pictures = {
+alienEgg.name = "slimeArtifact"
+alienEgg.icon = "__DeckedOut__/graphics/artifacts/alienEgg.png"
+alienEgg.icon_size = 112
+alienEgg.stack_size = 1
+alienEgg.pictures = {
     layers = {{
         size = 112,
-        filename = slimeArtifact.icon,
+        filename = alienEgg.icon,
         scale = 1
     }}
 }
 
 -- Register the new item prototype
-data:extend({slimeArtifact})
+data:extend({alienEgg})
