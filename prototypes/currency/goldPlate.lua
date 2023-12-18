@@ -1,14 +1,12 @@
 ﻿local goldPlate = table.deepcopy(data.raw["item"]["iron-gear-wheel"])
 
 goldPlate.name = "alienShard"
-goldPlate.icon = "__DeckedOut__/graphics/currency/gold-plate.png"
-goldPlate.icon_size = 120
+goldPlate.icon = "__DeckedOut__/graphics/artifacts/alienEgg.png"
+goldPlate.icon_size = 112
 goldPlate.stack_size = 1
 goldPlate.pictures = {
     layers = {{
-                  size = 120,
-                  width = 120,
-                  height = 64,
+                  size = 112,
                   filename = goldPlate.icon,
                   scale = 1
               }}

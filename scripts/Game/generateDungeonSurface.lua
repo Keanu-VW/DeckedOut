@@ -33,27 +33,30 @@ function generate_dungeon_floor()
             dungeon_surface.request_to_generate_chunks({x = chunk_x * 32, y = chunk_y * 32}, 0)
         end
     end
-    dungeon_surface.force_generate_chunk_requests()  -- Force the generation of requested chunks
-
-    local all_tiles = {}
-    for x = -200, map_size + 200 do
-        for y = -200, map_size + 200 do
-            table.insert(all_tiles, {name = "out-of-map", position = {x, y}})
-        end
-    end
-
-    dungeon_surface.set_tiles(all_tiles)
-
-    all_tiles = {}
-    for x = 1, map_size do
-        for y = 1, map_size do
-            if map_matrix[x][y] == 1 then
-                table.insert(all_tiles, {name = "dirtStoneTile", position = {x, y}})
-            end
-        end
-    end
-
-    dungeon_surface.set_tiles(all_tiles)
 
     return dungeon_surface
 end
+
+-- Event handler for on_chunk_generated
+script.on_event(defines.events.on_chunk_generated, function(event)
+    local surface = event.surface
+    local area = event.area
+    local map_matrix = global.GameState.map_matrix
+
+    -- Generate tiles for the new chunk
+    if surface == global.GameState.map_surface then
+        game.print("Generating chunk")
+        local all_tiles = {}
+        for x = area.left_top.x, area.right_bottom.x do
+            for y = area.left_top.y, area.right_bottom.y do
+                if map_matrix[x] and map_matrix[x][y] == 1 then
+                    table.insert(all_tiles, {name = "dirtStoneTile", position = {x, y}})
+                else 
+                    table.insert(all_tiles, {name = "out-of-map", position = {x, y}})
+                end
+            end
+        end
+        surface.set_tiles(all_tiles)
+    end
+    
+end)

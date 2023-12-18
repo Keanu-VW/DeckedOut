@@ -7,6 +7,7 @@ global.GameState.crumble_block = 0
 global.GameState.clank_block = 0
 global.GameState.debris_block = 0
 global.GameState.is_game_running = nil
+global.GameState.chunks_generated = nil
 
 global.Player = {}
 global.Player.player = nil
@@ -37,6 +38,7 @@ commands.add_command("run_dungeon", "Generates a new surface based on the matrix
 
     game.print("Turning matrix into new surface")
     global.GameState.map_surface = generate_dungeon_floor()
-
+    
     starting_game()
+    
 end)

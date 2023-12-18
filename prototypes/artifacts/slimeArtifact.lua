@@ -1,7 +1,7 @@
 local alienEgg = table.deepcopy(data.raw["item"]["iron-gear-wheel"]
 )
 
-alienEgg.name = "slimeArtifact"
+alienEgg.name = "alienEgg"
 alienEgg.icon = "__DeckedOut__/graphics/artifacts/alienEgg.png"
 alienEgg.icon_size = 112
 alienEgg.stack_size = 1

@@ -30,8 +30,7 @@ function starting_game()
         spawnX = math.ceil(map_size/4)
         spawnY = spawnTopLeft and math.random(1, math.ceil(map_size/2)) or math.random(math.ceil(map_size/2)+1, map_size)
     until room_matrix[spawnX][spawnY] == 1
-
-    -- Teleport player
+    
     player.teleport({spawnX, spawnY}, dungeon_surface)
 
     -- Set tiles to concrete
