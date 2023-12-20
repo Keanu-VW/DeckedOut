@@ -1,7 +1,7 @@
 ﻿local alienShard = table.deepcopy(data.raw["item"]["iron-gear-wheel"])
 
 alienShard.name = "alienShard"
-alienShard.icon = "__DeckedOut__/graphics/artifacts/alienEgg.png"
+alienShard.icon = "__DeckedOut__/graphics/currency/alienShard.png"
 alienShard.icon_size = 112
 alienShard.stack_size = 1
 alienShard.pictures = {
@@ -11,6 +11,7 @@ alienShard.pictures = {
                   scale = 1
               }}
 }
+alienShard.stack_size = 100
 
 
 data:extend({alienShard})

@@ -1,7 +1,7 @@
 require("prototypes/tiles/cobbleStoneTile.lua")
 require("prototypes/tiles/dirtStoneTile.lua")
 require("prototypes/walls/cobbleStoneWall.lua")
-require("prototypes/artifacts/slimeArtifact.lua")
+require("prototypes/artifacts/alienEgg.lua")
 require("prototypes/animations/fallingRock.lua")
 require("prototypes/currency/goldPlate.lua")
 require("prototypes/currency/alienShards.lua")

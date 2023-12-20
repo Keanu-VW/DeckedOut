@@ -5,5 +5,5 @@
     "description": "A roguelike minigame you can play while waiting for your factory to build/research",
     "author": "kiegames",
     "factorio_version": "1.1",
-    "dependencies": []
+    "dependencies": ["Factorio Library"]
   }
