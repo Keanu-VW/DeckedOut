@@ -27,6 +27,8 @@ require("scripts/Gui/DeckBuilderGui.lua")
 require("scripts/Gui/DungeonGui.lua")
 require("scripts/Gui/shopGui.lua")
 
+require("old_scripts/tests.lua")
+
 
 commands.add_command("run_dungeon", "Generates a new surface based on the matrix", function(command)
     global.Player.player = game.get_player(command.player_index)  -- Get the player who ran the command

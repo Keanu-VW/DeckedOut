@@ -1,6 +1,15 @@
 function generate_map_matrix()
     local map_size = global.GameState.map_size
     print("Generating Map of size: "..map_size)
+    
+    local tiles = {
+        "dirtStoneTile",
+        "dirt-1",
+        "grass-4",
+        "nuclear-ground",
+        "red-desert-0",
+        "landfill"
+    }
 
     --[[
         0) Create empty Matrix
@@ -57,6 +66,17 @@ function generate_map_matrix()
             subNode1 = {topX, topY, newTopHeight, bottomY}
             subNode2 = {newTopHeight, topY, bottomX, bottomY}
         end
+
+        -- Ensure that the new nodes are within the map_size
+        subNode1[1] = math.max(1, subNode1[1])
+        subNode1[2] = math.max(1, subNode1[2])
+        subNode1[3] = math.min(map_size, subNode1[3])
+        subNode1[4] = math.min(map_size, subNode1[4])
+
+        subNode2[1] = math.max(1, subNode2[1])
+        subNode2[2] = math.max(1, subNode2[2])
+        subNode2[3] = math.min(map_size, subNode2[3])
+        subNode2[4] = math.min(map_size, subNode2[4])
 
         return subNode1, subNode2
     end
@@ -299,7 +319,25 @@ function generate_map_matrix()
         end
     end
 
+    -- Chaning the 1's to tiles
+    
+    -- Iterate over the partitionList
+    for i = 1, #partitionList do
+        local partition = partitionList[i]
+        local topX, topY, bottomX, bottomY = partition[1], partition[2], partition[3], partition[4]
+        local tileType = tiles[math.random(1, #tiles)]
 
+        -- Iterate over the cells within the bounds of the partition in the map_matrix
+        for x = topX, bottomX do
+            for y = topY, bottomY do
+                -- If the cell has a value of 1, replace it with the tile type for that partition
+                if map_matrix[x][y] == 1 then
+                    map_matrix[x][y] = tileType
+                end
+            end
+        end
+    end
+    
     global.GameState.map_matrix = map_matrix
     global.GameState.room_map_matrix = map_matrix_backup
 end

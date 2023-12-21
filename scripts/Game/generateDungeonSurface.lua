@@ -45,13 +45,12 @@ script.on_event(defines.events.on_chunk_generated, function(event)
 
     -- Generate tiles for the new chunk
     if surface == global.GameState.map_surface then
-        game.print("Generating chunk")
         local all_tiles = {}
         for x = area.left_top.x, area.right_bottom.x do
             for y = area.left_top.y, area.right_bottom.y do
-                if map_matrix[x] and map_matrix[x][y] == 1 then
-                    table.insert(all_tiles, {name = "dirtStoneTile", position = {x, y}})
-                else 
+                if map_matrix[x] and map_matrix[x][y] and map_matrix[x][y] ~= 0 then
+                    table.insert(all_tiles, {name = map_matrix[x][y], position = {x, y}})
+                else
                     table.insert(all_tiles, {name = "out-of-map", position = {x, y}})
                 end
             end
