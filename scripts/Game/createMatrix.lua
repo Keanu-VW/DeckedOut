@@ -1,15 +1,6 @@
 function generate_map_matrix()
     local map_size = global.GameState.map_size
     print("Generating Map of size: "..map_size)
-    
-    local tiles = {
-        "dirtStoneTile",
-        "dirt-1",
-        "grass-4",
-        "nuclear-ground",
-        "red-desert-0",
-        "landfill"
-    }
 
     --[[
         0) Create empty Matrix
@@ -320,19 +311,28 @@ function generate_map_matrix()
     end
 
     -- Chaning the 1's to tiles
+    local tile_matrix = {}
+    for x = 1, map_size do
+        tile_matrix[x] = {}
+        for y = 1, map_size do
+            tile_matrix[x][y] = math.random(0, 1000)
+        end
+    end
     
-    -- Iterate over the partitionList
-    for i = 1, #partitionList do
-        local partition = partitionList[i]
-        local topX, topY, bottomX, bottomY = partition[1], partition[2], partition[3], partition[4]
-        local tileType = tiles[math.random(1, #tiles)]
-
-        -- Iterate over the cells within the bounds of the partition in the map_matrix
-        for x = topX, bottomX do
-            for y = topY, bottomY do
-                -- If the cell has a value of 1, replace it with the tile type for that partition
-                if map_matrix[x][y] == 1 then
-                    map_matrix[x][y] = tileType
+    local tile_perlin = gaussian_blur(tile_matrix)
+    for x = 1, map_size do
+        for y = 1, map_size do
+            if map_matrix[x][y] == 1 then
+                if tile_perlin[x][y] < 250 then
+                    map_matrix[x][y] = "dirtStoneTile"
+                elseif tile_perlin[x][y] < 500 then
+                    map_matrix[x][y] = "dirt-1"
+                elseif tile_perlin[x][y] < 750 then
+                    map_matrix[x][y] = "nuclear-ground"
+                elseif tile_perlin[x][y] < 1000 then
+                    map_matrix[x][y] = "red-desert-0"
+                else
+                    map_matrix[x][y] = "dirtStoneTile"  -- Add a default tile type
                 end
             end
         end
@@ -340,4 +340,49 @@ function generate_map_matrix()
     
     global.GameState.map_matrix = map_matrix
     global.GameState.room_map_matrix = map_matrix_backup
+end
+
+
+function gaussian_blur(input_matrix)
+    local output_matrix = {}
+    local map_size = global.GameState.map_size
+    -- Define the Gaussian kernel
+    local kernel = {
+        {1, 4, 6, 4, 1},
+        {4, 16, 24, 16, 4},
+        {6, 24, 36, 24, 6},
+        {4, 16, 24, 16, 4},
+        {1, 4, 6, 4, 1}
+    }
+
+    -- Normalize the kernel
+    for i = 1, 5 do
+        for j = 1, 5 do
+            kernel[i][j] = kernel[i][j] / 256
+        end
+    end
+
+
+    for x = 1, map_size do
+        output_matrix[x] = {}
+        for y = 1, map_size do
+            output_matrix[x][y] = input_matrix[x][y]
+        end
+    end
+
+    -- Apply the Gaussian blur
+    for x = 3, map_size - 2 do
+        for y = 3, map_size - 2 do
+            local sum = 0
+            for i = -2, 2 do
+                for j = -2, 2 do
+                    sum = sum + input_matrix[x + i][y + j] * kernel[i + 3][j + 3]
+                end
+            end
+            output_matrix[x][y] = math.max(0, math.min(1000, math.floor(sum)))
+        end
+    end
+    
+    
+    return output_matrix
 end
