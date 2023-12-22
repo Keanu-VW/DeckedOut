@@ -322,6 +322,7 @@ function generate_map_matrix()
             tile_matrix[x][y] = 0
         end
     end
+    
     for partition = 1, #partitionList do
         local partitionBiomeNumber = math.random(0, 1000)
         local topX, topY, bottomX, bottomY = partitionList[partition][1], partitionList[partition][2], partitionList[partition][3], partitionList[partition][4]
@@ -333,9 +334,56 @@ function generate_map_matrix()
             end
         end
     end
-    
 
-    local tile_perlin = gaussian_blur(tile_matrix)
+    for partition = 1, #partitionList do
+        local topX, topY, bottomX, bottomY = partitionList[partition][1], partitionList[partition][2], partitionList[partition][3], partitionList[partition][4]
+        for x = topX, bottomX do
+            local y = topY
+            local aot = math.floor((math.sin((x - topX)/5))*5)
+            for i = 0,  aot do
+                if map_matrix[x] and map_matrix[x][y + i] then
+                    if map_matrix[x][y + aot + 1] then
+                        tile_matrix[x][y + i] = tile_matrix[x][y + aot + 1]
+                    end
+                end
+            end
+        end
+        for x = topX, bottomX do
+            local y = bottomY
+            local aot = math.floor((math.sin((x - topX)/5))*5)
+            for i = 0,  aot do
+                if map_matrix[x] and map_matrix[x][y - i] then
+                    if map_matrix[x][y - aot - 1] then
+                        tile_matrix[x][y - i] = tile_matrix[x][y - aot - 1]
+                    end
+                end
+            end
+        end
+        for y = topY, bottomY do
+            local x = topX
+            local aot = math.floor((math.sin((y - topY)/5))*5)
+            for i = 0,  aot do
+                if map_matrix[x  - i] and map_matrix[x][y] then
+                    if map_matrix[x - aot - 1][y] then
+                        tile_matrix[x - i][y] = tile_matrix[x - aot - 1][y]
+                    end
+                end
+            end
+        end
+        for y = topY, bottomY do
+            local x = bottomX
+            local aot = math.floor((math.sin((y - topY)/5))*5)
+            for i = 0,  aot do
+                if map_matrix[x + i] and map_matrix[x][y] then
+                    if map_matrix[x + aot + 1][y] then
+                        tile_matrix[x + i][y] = tile_matrix[x + aot + 1][y]
+                    end
+                end
+            end
+        end
+    end
+    
+    local tile_perlin = tile_matrix
 
     for x = 1, map_size do
         for y = 1, map_size do
@@ -359,47 +407,3 @@ function generate_map_matrix()
     global.GameState.room_map_matrix = map_matrix_backup
 end
 
-
-function gaussian_blur(input_matrix)
-    local output_matrix = {}
-    local map_size = global.GameState.map_size
-    -- Define the Gaussian kernel
-    local kernel = {
-        {1, 4, 6, 4, 1},
-        {4, 16, 24, 16, 4},
-        {6, 24, 36, 24, 6},
-        {4, 16, 24, 16, 4},
-        {1, 4, 6, 4, 1}
-    }
-
-    -- Normalize the kernel
-    for i = 1, 5 do
-        for j = 1, 5 do
-            kernel[i][j] = kernel[i][j] / 256
-        end
-    end
-
-
-    for x = 1, map_size do
-        output_matrix[x] = {}
-        for y = 1, map_size do
-            output_matrix[x][y] = input_matrix[x][y]
-        end
-    end
-
-    -- Apply the Gaussian blur
-    for x = 3, map_size - 2 do
-        for y = 3, map_size - 2 do
-            local sum = 0
-            for i = -2, 2 do
-                for j = -2, 2 do
-                    sum = sum + input_matrix[x + i][y + j] * kernel[i + 3][j + 3]
-                end
-            end
-            output_matrix[x][y] = math.max(0, math.min(1000, math.floor(sum)))
-        end
-    end
-    
-    
-    return output_matrix
-end
