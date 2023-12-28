@@ -328,57 +328,7 @@ function generate_map_matrix()
         local topX, topY, bottomX, bottomY = partitionList[partition][1], partitionList[partition][2], partitionList[partition][3], partitionList[partition][4]
         for x = topX, bottomX do
             for y = topY, bottomY do
-                if map_matrix[x] and map_matrix[x][y] then
-                    tile_matrix[x][y] = partitionBiomeNumber
-                end
-            end
-        end
-    end
-
-    for partition = 1, #partitionList do
-        local topX, topY, bottomX, bottomY = partitionList[partition][1], partitionList[partition][2], partitionList[partition][3], partitionList[partition][4]
-        for x = topX, bottomX do
-            local y = topY
-            local aot = math.floor((math.sin((x - topX)/5))*5)
-            for i = 0,  aot do
-                if map_matrix[x] and map_matrix[x][y + i] then
-                    if map_matrix[x][y + aot + 1] then
-                        tile_matrix[x][y + i] = tile_matrix[x][y + aot + 1]
-                    end
-                end
-            end
-        end
-        for x = topX, bottomX do
-            local y = bottomY
-            local aot = math.floor((math.sin((x - topX)/5))*5)
-            for i = 0,  aot do
-                if map_matrix[x] and map_matrix[x][y - i] then
-                    if map_matrix[x][y - aot - 1] then
-                        tile_matrix[x][y - i] = tile_matrix[x][y - aot - 1]
-                    end
-                end
-            end
-        end
-        for y = topY, bottomY do
-            local x = topX
-            local aot = math.floor((math.sin((y - topY)/5))*5)
-            for i = 0,  aot do
-                if map_matrix[x  - i] and map_matrix[x][y] then
-                    if map_matrix[x - aot - 1][y] then
-                        tile_matrix[x - i][y] = tile_matrix[x - aot - 1][y]
-                    end
-                end
-            end
-        end
-        for y = topY, bottomY do
-            local x = bottomX
-            local aot = math.floor((math.sin((y - topY)/5))*5)
-            for i = 0,  aot do
-                if map_matrix[x + i] and map_matrix[x][y] then
-                    if map_matrix[x + aot + 1][y] then
-                        tile_matrix[x + i][y] = tile_matrix[x + aot + 1][y]
-                    end
-                end
+                tile_matrix[x][y] = partitionBiomeNumber
             end
         end
     end

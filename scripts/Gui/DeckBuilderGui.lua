@@ -16,27 +16,17 @@ addCardToDeck("Summon Ally", 3)
 addCardToDeck("Treasure", 3)
 
 -- Function to create a card button
-local function createCardButton(scrollPane, card, index, source)
-    local button = scrollPane.add{
-        type = "sprite-button",
-        style = "flib_slot_button_grey",
-        caption = "Card: " .. card.name,
-        name = "Dto_card_button_" .. card.name .. index,
-        tags = {
-            gui = "deck_builder",
-            action = "move_card",
-            card_name = card.name,
-            source = source
-        }
-    }
-    button.style.width = 200
+local function createCardButton(listBox, card, index, source)
+    listBox.add_item(card.name)
 end
 
 
 -- Function to update the left frame with equipped cards
 local function updateLeftFrame(player, leftFrame)
     leftFrame.clear()
-    local equippedScrollPane = gui.add(leftFrame, {type="scroll-pane", name="Dto_equipped_scroll_pane", direction="vertical", style="flib_shallow_scroll_pane"})
+    local equippedScrollPane = gui.add(leftFrame, {type="list-box", name="Dto_equipped_scroll_pane", direction="vertical", style="mods_list_box"})
+    equippedScrollPane.style.horizontally_stretchable = true
+    equippedScrollPane.style.vertically_stretchable = true
     for index, card in ipairs(global.Player.equipped_cards) do
         createCardButton(equippedScrollPane, card, index, "equipped_cards")
     end
@@ -45,7 +35,9 @@ end
 -- Function to update the bottom right frame with player's deck
 local function updateBottomRightFrame(player, bottomRightFrame)
     bottomRightFrame.clear()
-    local playerDeckScrollPane = gui.add(bottomRightFrame, {type="scroll-pane", name="Dto_player_deck_pane", direction="vertical", style="flib_shallow_scroll_pane"})
+    local playerDeckScrollPane = gui.add(bottomRightFrame, {type="list-box", name="Dto_player_deck_pane", direction="vertical", style="mods_list_box"})
+    playerDeckScrollPane.style.horizontally_stretchable = true
+    playerDeckScrollPane.style.vertically_stretchable = true
     for index, card in ipairs(global.Player.inventory_cards) do
         createCardButton(playerDeckScrollPane, card, index, "player_deck")
     end
@@ -120,35 +112,59 @@ script.on_event(defines.events.on_gui_click, function(event)
         else
             createDeckBuilderGui(player)
         end
-    elseif event.element.valid and event.element.tags.gui == "deck_builder" then
-        local action = event.element.tags
-        if action.action == "move_card" then
-            local card_name = action.card_name
-            local source = action.source
-            if source == "player_deck" then
-                -- Move the card from player_deck to equipped_cards
-                for index, card in ipairs(global.Player.inventory_cards) do
-                    if card.name == card_name then
-                        table.remove(global.Player.inventory_cards, index)
-                        table.insert(global.Player.equipped_cards, card)
-                        break
-                    end
-                end
-            else
-                -- Move the card from equipped_cards to player_deck
-                for index, card in ipairs(global.Player.equipped_cards) do
-                    if card.name == card_name then
-                        table.remove(global.Player.equipped_cards, index)
-                        table.insert(global.Player.inventory_cards, card)
-                        break
-                    end
-                end
-            end
-            -- Update the frames
-            local leftFrame = player.gui.screen["Decktorio_Deck_Builder"].Dto_content_frame.Dto_left_frame
-            local lowerRightFrame = player.gui.screen["Decktorio_Deck_Builder"].Dto_content_frame.Dto_right_frame.Dto_lower_right_frame
-            updateLeftFrame(player, leftFrame)
-            updateBottomRightFrame(player, lowerRightFrame)
-        end
     end
 end)
+
+
+
+script.on_event(defines.events.on_gui_selection_state_changed, function(event)
+    -- From equipped cards to player deck
+    if event.element.valid and event.element.name == "Dto_equipped_scroll_pane" then
+        game.print("Element Name:" .. event.element.name)
+        game.print("Name:" .. event.name)
+        game.print("tick:" .. event.tick)
+    end
+    
+    -- From player deck to equipped cards
+    if event.element.valid and event.element.name == "Dto_player_deck_pane" then
+        game.print("Element Name:" .. event.element.name)
+        
+        game.print("Name:" .. event.name)
+        game.print("tick:" .. event.tick)
+    end
+    
+end)
+
+--[[
+local action = event.element.tags
+if action.action == "move_card" then
+    game.print("Moving card")
+    local card_name = action.card_name
+    local source = action.source
+    local player = game.get_player(event.player_index)
+    if source == "player_deck" then
+        -- Move the card from player_deck to equipped_cards
+        for index, card in ipairs(global.Player.inventory_cards) do
+            if card.name == card_name then
+                table.remove(global.Player.inventory_cards, index)
+                table.insert(global.Player.equipped_cards, card)
+                break
+            end
+        end
+    else
+        -- Move the card from equipped_cards to player_deck
+        for index, card in ipairs(global.Player.equipped_cards) do
+            if card.name == card_name then
+                table.remove(global.Player.equipped_cards, index)
+                table.insert(global.Player.inventory_cards, card)
+                break
+            end
+        end
+    end
+    -- Update the frames
+    local leftFrame = player.gui.screen["Decktorio_Deck_Builder"].Dto_content_frame.Dto_left_frame
+    local lowerRightFrame = player.gui.screen["Decktorio_Deck_Builder"].Dto_content_frame.Dto_right_frame.Dto_lower_right_frame
+    updateLeftFrame(player, leftFrame)
+    updateBottomRightFrame(player, lowerRightFrame)
+end
+]]--
