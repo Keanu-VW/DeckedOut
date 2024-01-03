@@ -1,5 +1,4 @@
 global.GameState = {}
-global.GameState.chunks = nil
 global.GameState.biomes = nil
 global.GameState.map_size = nil
 global.GameState.map_matrix = nil
